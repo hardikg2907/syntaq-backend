@@ -44,11 +44,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     # third party
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    "django.contrib.sites",
 
     # auth
     "dj_rest_auth",
@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "syntaq_auth",
     "hackathons"
 ]
+SITE_ID=1
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -79,7 +80,6 @@ SOCIALACCOUNT_PROVIDERS = {
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 
-SITE_ID=1
 REST_USE_JWT = True
 
 
@@ -213,4 +213,3 @@ AUTH_USER_MODEL = "syntaq_auth.CustomUserModel"
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "syntaq_auth.serializers.CustomUserModelSerializer",
 }
-
