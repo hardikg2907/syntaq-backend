@@ -20,5 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
+    path("api/auth/", include("dj_rest_auth.urls")), # endpoints provided by dj-rest-auth
+    path("api/social/login/", include("syntaq_auth.urls")), # our own views
     path("api/hackathons/", include("hackathons.urls")),
 ]
