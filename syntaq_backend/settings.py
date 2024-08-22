@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-
     # auth
     "dj_rest_auth",
     "dj_rest_auth.registration",
@@ -57,23 +56,22 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    
     # local
     "api",
     "syntaq_auth",
-    "hackathons"
+    "hackathons",
 ]
-SITE_ID=1
+SITE_ID = 1
 
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
+    "google": {
+        "SCOPE": [
             "profile",
             "email",
         ],
         "AUTH_PARAMS": {
             "access_type": "online",
-        }
+        },
     }
 }
 
@@ -81,9 +79,9 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 
 REST_USE_JWT = True
+USE_JWT = True
 
-
-SECRET_KEY=getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -94,15 +92,14 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
     # Downloaded Middleware
-'allauth.account.middleware.AccountMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "syntaq_backend.urls"
 
 CORS_URLS_REGEX = r"^/api/.*"
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
 TEMPLATES = [
     {
@@ -188,18 +185,16 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
-                ],
-    "DEFAULT_PERMISSIONS_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated"
     ],
+    "DEFAULT_PERMISSIONS_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     # "PAGE_SIZE": 10,
 }
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ["Bearer"],
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=60),  
-    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7), 
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
