@@ -31,7 +31,7 @@ SECRET_KEY = "django-insecure-tjt9+9=7%qiugx95!qqy0fhb8qb)0u%3t&%6t8kkqg==!41^_6
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+REST_USE_JWT = True
 ALLOWED_HOSTS = []
 
 
@@ -78,8 +78,6 @@ SOCIALACCOUNT_PROVIDERS = {
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 
-REST_USE_JWT = True
-USE_JWT = True
 
 SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 
@@ -193,7 +191,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ["Bearer"],
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
