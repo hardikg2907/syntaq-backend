@@ -41,3 +41,12 @@ class HackathonListCreateAPIView(generics.ListCreateAPIView):
 
 
 hackathon_list_create_view = HackathonListCreateAPIView.as_view()
+
+
+class HackathonDetailAPIView(generics.RetrieveAPIView):
+    queryset = Hackathon.objects.all()
+    serializer_class = HackathonSerializer
+    lookup_field = "pk"
+
+
+hackathon_detail_view = HackathonDetailAPIView.as_view()
