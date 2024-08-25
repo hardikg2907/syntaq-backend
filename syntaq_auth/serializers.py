@@ -26,4 +26,4 @@ class PublicUserDetailSerializer(ModelSerializer):
 
     class Meta:
         model = CustomUserModel
-        fields = ["userId", "email", "username", "first_name", "last_name"]
+        fields = [ "email", "username", "first_name", "last_name"]

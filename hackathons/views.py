@@ -22,10 +22,10 @@ class HackathonListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = HackathonSerializer
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
+        # print(request.data)
         user_email = request.data.get("userEmail")
         userId = get_user(user_email)
-        print(userId)
+        # print(userId)
         # serializer.save(organizerId=user)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -37,7 +37,7 @@ class HackathonListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer, *args, **kwargs):
         serializer.save(**kwargs)
-        print(self.request.data)
+        # print(self.request.data)
 
 
 hackathon_list_create_view = HackathonListCreateAPIView.as_view()

@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db.models import CheckConstraint, Q, F
 
 from syntaq_auth.models import CustomUserModel
 
@@ -22,6 +24,29 @@ class Hackathon(models.Model):
     photo = models.CharField(max_length=100, null=True, blank=True)
     maxTeamSize = models.IntegerField()
     minTeamSize = models.IntegerField()
+
+    class Meta:
+        constraints = [
+            CheckConstraint(
+                check=Q(registrationClose__gte=F("registrationOpen")),
+                name="registration_close_gte_registration_open",
+            ),
+            CheckConstraint(
+                check=Q(end_date__gte=F("start_date")), name="end_date_gte_start_date"
+            ),
+            CheckConstraint(
+                check=Q(maxTeamSize__gte=F("minTeamSize")),
+                name="max_team_size_gte_min_team_size",
+            ),
+        ]
+
+    # def clean(self):
+    #     if self.registrationOpen > self.registrationClose:
+    #         raise ValidationError({'registrationClose':"Registration open date cannot be after registration close date"})
+    #     if(self.start_date > self.end_date):
+    #         raise ValidationError({'end_date':"Start date cannot be after end date"})
+    #     if(self.maxTeamSize < self.minTeamSize):
+    #         raise ValidationError({'minTeamSize':"Max team size cannot be less than min team size"})
 
     def __str__(self):
         return self.title
