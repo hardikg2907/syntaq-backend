@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import generics
 from rest_framework import status
+from datetime import datetime
+from pytz import timezone
 
 from .models import Hackathon
 from .serializers import HackathonSerializer
@@ -17,7 +19,9 @@ def api_home(request, *args, **kwargs):
 
 
 class HackathonListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Hackathon.objects.all()
+    now = datetime.now().astimezone(timezone("UTC"))
+
+    queryset = Hackathon.objects.filter(registrationClose__gte=now)
 
     serializer_class = HackathonSerializer
 
