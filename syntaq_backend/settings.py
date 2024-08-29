@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "api",
     "syntaq_auth",
     "hackathons",
+    "teams",
 ]
 SITE_ID = 1
 

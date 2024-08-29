@@ -40,13 +40,5 @@ class Hackathon(models.Model):
             ),
         ]
 
-    # def clean(self):
-    #     if self.registrationOpen > self.registrationClose:
-    #         raise ValidationError({'registrationClose':"Registration open date cannot be after registration close date"})
-    #     if(self.start_date > self.end_date):
-    #         raise ValidationError({'end_date':"Start date cannot be after end date"})
-    #     if(self.maxTeamSize < self.minTeamSize):
-    #         raise ValidationError({'minTeamSize':"Max team size cannot be less than min team size"})
-
     def __str__(self):
         return self.title
