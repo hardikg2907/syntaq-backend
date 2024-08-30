@@ -12,10 +12,11 @@ from .adapters import CustomGoogleOAuth2Adapter
 def get_user(email):
     try:
         user = CustomUserModel.objects.get(email=email)
-        print(user.userId)
+        # print(user.userId)
         return user
     except CustomUserModel.DoesNotExist:
-        print("User with this email does not exist.")
+        # print("User with this email does not exist.")
+        raise ValueError("User with this email does not exist.")
         return None
 
 

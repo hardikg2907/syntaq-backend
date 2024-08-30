@@ -17,6 +17,9 @@ class Team(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ("hackathon", "leader")
+
     def is_registration_complete(self):
         return self.members.filter(is_confirmed=False).count() == 0
 

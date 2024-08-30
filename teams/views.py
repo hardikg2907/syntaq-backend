@@ -22,10 +22,16 @@ class CreateTeamView(generics.CreateAPIView):
         )
         user = get_user(self.request.data.get("user_email"))
         with transaction.atomic():
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(
+                data={
+                    "name": request.data.get("name"),
+                    "hackathon": hackathon.pk,
+                    "leader": user.pk,
+                }
+            )
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
-            team = serializer.save(hackathon=hackathon, leader=user)
+            team = serializer.save()
             TeamMember.objects.create(team=team, user=user, is_confirmed=True)
         headers = self.get_success_headers(serializer.data)
         return Response(
