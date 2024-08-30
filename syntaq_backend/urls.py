@@ -30,4 +30,5 @@ urlpatterns = [
     path("api/auth/token/refresh/", get_refresh_view().as_view(), name="token_refresh"),
     path("api/social/login/", include("syntaq_auth.urls")),  # our own views
     path("api/hackathons/", include("hackathons.urls")),
+    path("api/teams/", include("teams.urls")),
 ]

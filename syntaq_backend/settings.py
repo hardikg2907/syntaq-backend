@@ -32,6 +32,7 @@ SECRET_KEY = "django-insecure-tjt9+9=7%qiugx95!qqy0fhb8qb)0u%3t&%6t8kkqg==!41^_6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 REST_USE_JWT = True
+JWT_AUTH_HTTPONLY = False  # Make sure refresh token is sent
 ALLOWED_HOSTS = ["careful-charmine-hardik-f0000fb2.koyeb.app", "localhost", "127.0.0.1"]
 
 

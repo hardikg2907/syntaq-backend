@@ -28,3 +28,7 @@ class GoogleLoginView(SocialLoginView):
         getenv("FRONTEND_URL") or "http://localhost:3000"
     )  # Your frontend URL
     client_class = OAuth2Client
+
+    # def process_login(self):
+    #     print(self.request.data)
+    #     super().get_adapter(self.request).login(self.request, self.user)
