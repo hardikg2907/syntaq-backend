@@ -59,9 +59,6 @@ class TeamMember(models.Model):
 class Invitation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="invitations")
-    sender = models.ForeignKey(
-        CustomUserModel, on_delete=models.CASCADE, related_name="sent_invitations"
-    )
     receiver = models.ForeignKey(
         CustomUserModel, on_delete=models.CASCADE, related_name="received_invitations"
     )
@@ -70,12 +67,12 @@ class Invitation(models.Model):
 
     class Meta:
         unique_together = ("team", "receiver")
-        constraints = [
-            CheckConstraint(
-                check=~Q(sender=F("receiver")),
-                name="cannot_invite_self",
-            ),
-        ]
+        # constraints = [
+        #     CheckConstraint(
+        #         check=~Q(sender=F("receiver")),
+        #         name="cannot_invite_self",
+        #     ),
+        # ]
 
     def __str__(self):
         return f"Invite from {self.sender.username} to {self.receiver.username} for {self.team.name}"

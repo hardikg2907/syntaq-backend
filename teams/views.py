@@ -14,7 +14,6 @@ from .serializers import TeamSerializer, InvitationSerializer, TeamMemberSeriali
 
 class CreateTeamView(generics.CreateAPIView):
     serializer_class = TeamSerializer
-    # permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         hackathon = get_object_or_404(
@@ -41,19 +40,18 @@ class CreateTeamView(generics.CreateAPIView):
 
 class SendInvitationView(generics.CreateAPIView):
     serializer_class = InvitationSerializer
-    # permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         team = get_object_or_404(Team, id=self.kwargs["team_id"])
-        friend = get_object_or_404(
-            CustomUserModel, id=self.request.data.get("friend_id")
+        friend = get_user(self.request.data.get("member_email"))
+        serializer = self.get_serializer(data={"team": team.pk, "receiver": friend.pk})
+        invitation = serializer.save(
+            team=team, sender=self.request.user, receiver=friend
         )
-        serializer.save(team=team, sender=self.request.user, receiver=friend)
 
 
 class AcceptInvitationView(generics.UpdateAPIView):
     serializer_class = InvitationSerializer
-    # permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
         invitation = get_object_or_404(
@@ -66,4 +64,20 @@ class AcceptInvitationView(generics.UpdateAPIView):
         )
         return Response(
             {"detail": "You have joined the team."}, status=status.HTTP_200_OK
+        )
+
+
+class RegisterTeamView(generics.GenericAPIView):
+
+    def post(self, request, *args, **kwargs):
+        team = get_object_or_404(Team, id=self.kwargs["team_id"], leader=request.user)
+        if team.is_registration_complete():
+            team.register_team()
+            return Response(
+                {"detail": "Team successfully registered for the hackathon!"},
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {"detail": "All team members must confirm their participation."},
+            status=status.HTTP_400_BAD_REQUEST,
         )
