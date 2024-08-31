@@ -17,18 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenVerifyView
-from dj_rest_auth.jwt_auth import get_refresh_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     # path("api/", include("api.urls")),
-    path(
-        "api/auth/", include("dj_rest_auth.urls")
-    ),  # endpoints provided by dj-rest-auth
-    path("api/auth/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-    path("api/auth/token/refresh/", get_refresh_view().as_view(), name="token_refresh"),
-    path("api/social/login/", include("syntaq_auth.urls")),  # our own views
+    path("api/auth/", include("syntaq_auth.urls")),  # our own views
     path("api/hackathons/", include("hackathons.urls")),
     path("api/teams/", include("teams.urls")),
 ]

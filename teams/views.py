@@ -89,14 +89,18 @@ class AcceptInvitationView(generics.UpdateAPIView):
 class RegisterTeamView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
-        team = get_object_or_404(Team, id=self.kwargs["team_id"], leader=request.user)
-        if team.is_registration_complete():
+        leader = get_user(request.data.get("user_email"))
+        team = get_object_or_404(Team, id=self.kwargs["team_id"], leader=leader)
+
+        try:
             team.register_team()
             return Response(
                 {"detail": "Team successfully registered for the hackathon!"},
                 status=status.HTTP_200_OK,
             )
-        return Response(
-            {"detail": "All team members must confirm their participation."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        # return Response(
+        #     {"detail": "All team members must confirm their participation."},
+        #     status=status.HTTP_400_BAD_REQUEST,
+        # )

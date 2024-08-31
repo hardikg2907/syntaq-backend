@@ -16,7 +16,7 @@ def get_user(email):
         return user
     except CustomUserModel.DoesNotExist:
         # print("User with this email does not exist.")
-        raise ValueError("User with this email does not exist.")
+        raise ValueError("User does not exist.")
         return None
 
 

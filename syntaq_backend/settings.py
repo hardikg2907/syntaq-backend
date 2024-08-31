@@ -31,17 +31,7 @@ SECRET_KEY = "django-insecure-tjt9+9=7%qiugx95!qqy0fhb8qb)0u%3t&%6t8kkqg==!41^_6
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-REST_USE_JWT = True
-JWT_AUTH_HTTPONLY = False  # Make sure refresh token is sent
-ALLOWED_HOSTS = ["careful-charmine-hardik-f0000fb2.koyeb.app", "localhost", "127.0.0.1"]
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = getenv("DEFAULT_FROM_EMAIL")
 # Application definition
 
 INSTALLED_APPS = [
@@ -55,6 +45,7 @@ INSTALLED_APPS = [
     # third party
     "rest_framework",
     "rest_framework.authtoken",
+    "rest_framework_simplejwt",
     "corsheaders",
     # auth
     "dj_rest_auth",
@@ -70,6 +61,19 @@ INSTALLED_APPS = [
     "teams",
 ]
 SITE_ID = 1
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
+}
+ALLOWED_HOSTS = ["careful-charmine-hardik-f0000fb2.koyeb.app", "localhost", "127.0.0.1"]
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = getenv("DEFAULT_FROM_EMAIL")
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -193,11 +197,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        # "rest_framework.authentication.BasicAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
+        # "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "DEFAULT_PERMISSIONS_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    # "DEFAULT_PERMISSIONS_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     # "PAGE_SIZE": 10,
 }
@@ -207,7 +212,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
     "USER_ID_FIELD": "userId",
     "USER_ID_CLAIM": "user_id",

@@ -23,10 +23,15 @@ class Team(models.Model):
 
     def is_registration_complete(self):
         """
-        Check if the team's registration is complete.
+        Check if the team's registration is complete and validation.
         Returns:
-            bool: True if the team's registration is complete, False otherwise.
+            bool: True if the team's registration is complete and valid composition, False otherwise.
         """
+        if (
+            self.members.count() < self.hackathon.min_team_size
+            or self.members.count() > self.hackathon.max_team_size
+        ):
+            raise ValidationError("Team size is not within the hackathon's limits")
         return self.members.filter(is_confirmed=False).count() == 0
 
     def register_team(self):
