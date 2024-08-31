@@ -17,7 +17,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
-        fields = ["id", "team", "sender", "receiver", "sent_at", "accepted"]
+        fields = ["id", "team", "receiver_email", "sent_at", "accepted"]
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
