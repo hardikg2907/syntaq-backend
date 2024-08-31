@@ -223,3 +223,6 @@ REST_AUTH_SERIALIZERS = {
 
 # Celery settings
 CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = "pickle"
+CELERY_ACCEPT_CONTENT = ["pickle", "json"]

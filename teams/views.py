@@ -1,15 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.core.mail import send_mail
-from django.urls import reverse
-from django.conf import settings
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-
 from os import getenv
 
 from hackathons.models import Hackathon
@@ -17,6 +10,7 @@ from syntaq_auth.models import CustomUserModel
 from syntaq_auth.views import get_user
 from .models import Team, Invitation, TeamMember
 from .serializers import TeamSerializer, InvitationSerializer, TeamMemberSerializer
+from .tasks import send_invitation_email
 
 
 class CreateTeamView(generics.CreateAPIView):
@@ -59,41 +53,11 @@ class SendInvitationView(generics.CreateAPIView):
         with transaction.atomic():
             self.perform_create(serializer)
             invitation = serializer.save()
-            self.send_invitation_email(invitation, team)
+            transaction.on_commit(lambda: send_invitation_email.delay(invitation, team))
+            # send_invitation_email.delay(invitation, team)
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
-
-    def send_invitation_email(self, invitation, team):
-        frontend_base_url = getenv("FRONTEND_URL")
-
-        # Construct the frontend URL with team_id and invitation_id as query parameters
-        accept_url = f"{frontend_base_url}/accept-invitation?teamId={team.id}&invitationId={invitation.id}"
-
-        subject = f"Invitation to join team {team.name} for {team.hackathon.title}"
-
-        leader_full_name = f"{team.leader.first_name} {team.leader.last_name}"
-
-        message = render_to_string(
-            "teams/invitation_email.html",
-            {
-                "team": team,
-                "invitation": invitation,
-                "accept_url": accept_url,
-                "leader_full_name": leader_full_name,
-            },
-        )
-
-        plain_message = strip_tags(message)
-
-        send_mail(
-            subject,
-            plain_message,
-            settings.DEFAULT_FROM_EMAIL,
-            [invitation.receiver_email],
-            fail_silently=False,
-            html_message=message,
         )
 
 
