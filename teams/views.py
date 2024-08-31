@@ -4,6 +4,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.conf import settings
+from django.template.loader import render_to_string
+
+from os import getenv
 
 from hackathons.models import Hackathon
 from syntaq_auth.models import CustomUserModel
@@ -43,10 +49,38 @@ class SendInvitationView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         team = get_object_or_404(Team, id=self.kwargs["team_id"])
-        friend = get_user(self.request.data.get("member_email"))
-        serializer = self.get_serializer(data={"team": team.pk, "receiver": friend.pk})
-        invitation = serializer.save(
-            team=team, sender=self.request.user, receiver=friend
+        invitation_data = {
+            "team": team.pk,
+            "receiver_email": request.data.get("receiver_email"),
+        }
+        serializer = self.get_serializer(data=invitation_data)
+        serializer.is_valid(raise_exception=True)
+        with transaction.atomic():
+            self.perform_create(serializer)
+            invitation = serializer.save()
+            self.send_invitation_email(invitation, team)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    def send_invitation_email(self, invitation, team):
+        frontend_base_url = getenv("FRONTEND_URL")
+
+        # Construct the frontend URL with team_id and invitation_id as query parameters
+        accept_url = f"{frontend_base_url}/accept-invitation?teamId={team.id}&invitationId={invitation.id}"
+
+        subject = f"Invitation to join team {team.name} for {team.hackathon.title}"
+        message = render_to_string(
+            "teams/invitation_email.html",
+            {"team": team, "invitation": invitation, "accept_url": accept_url},
+        )
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [invitation.receiver_email],
+            fail_silently=False,
         )
 
 
