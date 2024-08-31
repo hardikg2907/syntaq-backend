@@ -13,4 +13,14 @@ urlpatterns = [
         views.AcceptInvitationView.as_view(),
         name="accept_invitation",
     ),
+    # path(
+    #     "<int:team_id>/members/",
+    #     views.TeamMembersView.as_view(),
+    #     name="team_members",
+    # ),
+    path(
+        "register/<int:team_id>/",
+        views.RegisterTeamView.as_view(),
+        name="register_team",
+    ),
 ]

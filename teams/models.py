@@ -16,17 +16,24 @@ class Team(models.Model):
         CustomUserModel, on_delete=models.CASCADE, related_name="led_teams"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    registered = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ("hackathon", "leader")
 
     def is_registration_complete(self):
+        """
+        Check if the team's registration is complete.
+        Returns:
+            bool: True if the team's registration is complete, False otherwise.
+        """
         return self.members.filter(is_confirmed=False).count() == 0
 
     def register_team(self):
         if self.is_registration_complete():
             # self.hackathon.registered_teams.add(self)
             # proceed with registration logic
+            self.registered = True
             pass
         else:
             raise ValidationError("Team registration is incomplete")
