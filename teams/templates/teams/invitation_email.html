@@ -1,13 +1,14 @@
-<!-- teams/templates/teams/invitation_email.html -->
 
+{% load static %}
+<!DOCTYPE html>
+<html>
 {% comment %} <p>
   Hello {{ invitation.receiver.first_name }} {{ invitation.receiver.last_name}},
 </p> {% endcomment %}
-
+<body>
 <p>
-  You have been invited by {{ invitation.team.leader.first_name }} {{
-  invitation.team.leader.last_name }} to join the team "{{ team.name }}" for the
-  "{{ team.hackathon.title }}" hackathon.
+  You have been invited by {{leader_full_name}} to join the team <strong>{{ team.name }}</strong> for the
+  <strong>{{ team.hackathon.title }}</strong> hackathon.
 </p>
 
 <p>To accept this invitation, please click the link below:</p>
@@ -15,3 +16,5 @@
 <a href="{{ accept_url }}">Accept Invitation</a>
 
 <p>Thank you!</p>
+</body>
+</html>

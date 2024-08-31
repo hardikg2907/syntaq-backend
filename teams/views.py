@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from os import getenv
 
@@ -71,16 +72,28 @@ class SendInvitationView(generics.CreateAPIView):
         accept_url = f"{frontend_base_url}/accept-invitation?teamId={team.id}&invitationId={invitation.id}"
 
         subject = f"Invitation to join team {team.name} for {team.hackathon.title}"
+
+        leader_full_name = f"{team.leader.first_name} {team.leader.last_name}"
+
         message = render_to_string(
             "teams/invitation_email.html",
-            {"team": team, "invitation": invitation, "accept_url": accept_url},
+            {
+                "team": team,
+                "invitation": invitation,
+                "accept_url": accept_url,
+                "leader_full_name": leader_full_name,
+            },
         )
+
+        plain_message = strip_tags(message)
+
         send_mail(
             subject,
-            message,
+            plain_message,
             settings.DEFAULT_FROM_EMAIL,
             [invitation.receiver_email],
             fail_silently=False,
+            html_message=message,
         )
 
 
