@@ -219,3 +219,7 @@ AUTH_USER_MODEL = "syntaq_auth.CustomUserModel"
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "syntaq_auth.serializers.CustomUserModelSerializer",
 }
+
+
+# Celery settings
+CELERY_BROKER_URL = "redis://localhost:6379/0"
