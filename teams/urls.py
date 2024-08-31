@@ -9,7 +9,7 @@ urlpatterns = [
         name="send_invitation",
     ),
     path(
-        "<int:team_id>/accept/<int:invitation_id>/",
+        "<int:team_id>/accept/<str:invitation_id>/",
         views.AcceptInvitationView.as_view(),
         name="accept_invitation",
     ),

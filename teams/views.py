@@ -43,6 +43,7 @@ class SendInvitationView(generics.CreateAPIView):
     serializer_class = InvitationSerializer
 
     def create(self, request, *args, **kwargs):
+        # print(request.user)
         team = get_object_or_404(Team, id=self.kwargs["team_id"])
         invitation_data = {
             "team": team.pk,
@@ -64,15 +65,22 @@ class SendInvitationView(generics.CreateAPIView):
 class AcceptInvitationView(generics.UpdateAPIView):
     serializer_class = InvitationSerializer
 
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
     def update(self, request, *args, **kwargs):
         invitation = get_object_or_404(
-            Invitation, id=self.kwargs["invitation_id"], receiver=request.user
+            Invitation,
+            id=self.kwargs["invitation_id"],
+            receiver_email=request.data.get("user_email"),
         )
         invitation.accepted = True
-        invitation.save()
-        TeamMember.objects.create(
-            team=invitation.team, user=request.user, is_confirmed=True
-        )
+        user = get_user(request.data.get("user_email"))
+        with transaction.atomic():
+            invitation.save()
+            TeamMember.objects.create(
+                team=invitation.team, user=user, is_confirmed=True
+            )
         return Response(
             {"detail": "You have joined the team."}, status=status.HTTP_200_OK
         )
