@@ -6,8 +6,8 @@ from syntaq_auth.models import CustomUserModel
 class CustomGoogleOAuth2Adapter(GoogleOAuth2Adapter):
 
     def populate_user(self, request, sociallogin, data):
-        print(data)
-        print(sociallogin)
+        # print(data)
+        # print(sociallogin)
 
         user = sociallogin.user
         user.email = data.get("email")
