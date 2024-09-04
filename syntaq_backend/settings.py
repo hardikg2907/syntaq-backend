@@ -65,7 +65,13 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
 }
-ALLOWED_HOSTS = ["careful-charmine-hardik-f0000fb2.koyeb.app", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "careful-charmine-hardik-f0000fb2.koyeb.app",
+    "localhost",
+    "127.0.0.1",
+    ".vercel.app",
+    ".now.sh",
+]
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
