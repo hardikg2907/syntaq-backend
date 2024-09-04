@@ -2,6 +2,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path(
+        "<int:hackathon_id>/",
+        views.UserTeamInHackathonView.as_view(),
+        name="team_detail",
+    ),
     path("create/", views.CreateTeamView.as_view(), name="create_team"),
     path(
         "<int:team_id>/invite/",
