@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from os import getenv
+from os import getenv, path
 import dj_database_url
 import datetime
 
@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-tjt9+9=7%qiugx95!qqy0fhb8qb)0u%3t&%6t8kkqg==!41^_6"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(getenv("DEBUG", False))
 
 # Application definition
 
@@ -196,8 +196,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = "staticfiles"
+STATICFILES_DIRS = (path.join(BASE_DIR, "static"),)
+STATIC_ROOT = path.join(BASE_DIR, "staticfiles", "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
