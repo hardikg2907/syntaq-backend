@@ -1,0 +1,1 @@
+celery -A syntaq_backend worker --loglevel=info

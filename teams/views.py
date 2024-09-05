@@ -40,6 +40,26 @@ class CreateTeamView(generics.CreateAPIView):
         )
 
 
+class UpdateTeamAPIView(generics.UpdateAPIView):
+    serializer_class = TeamSerializer
+    queryset = Team.objects.all()
+    lookup_field = "pk"
+
+    def update(self, request, *args, **kwargs):
+        team = self.get_object()
+        if team.leader != request.user:
+            return Response(
+                {"error": "You are not the leader of this team."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # team.name = request.data.get("name")
+        # team.save()
+        # headers = self.get_success_headers(team)
+        # return Response(request.data, status=status.HTTP_200_OK, headers=headers)
+        kwargs["partial"] = True
+        return super().update(request, *args, **kwargs)
+
+
 class TeamDetailAPIView(generics.RetrieveAPIView):
     serializer_class = TeamSerializer
     queryset = Team.objects.all()

@@ -9,7 +9,7 @@
 - [x] Create new app for teams
 - [x] Create models for teams, team members, team invitations
 - [x] Create CreateTeamView
-- [] Create SendInvitationView
-- [] Maybe use django-celery to offload mail task for invitation
+- [x] Create SendInvitationView
+- [x] Maybe use django-celery to offload mail task for invitation
 
 - [] Deploy it
