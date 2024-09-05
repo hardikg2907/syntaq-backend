@@ -6,10 +6,18 @@ from hackathons.models import Hackathon
 from syntaq_auth.models import CustomUserModel
 
 
+class UserTeamMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUserModel
+        fields = ["email", "first_name", "last_name"]
+
+
 class TeamMemberSerializer(serializers.ModelSerializer):
+    userFields = UserTeamMemberSerializer(read_only=True, source="user")
+
     class Meta:
         model = TeamMember
-        fields = ["id", "team", "user", "joined_at", "is_confirmed"]
+        fields = ["id", "is_confirmed", "userFields"]
 
 
 class TeamSerializer(serializers.ModelSerializer):

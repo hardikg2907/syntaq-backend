@@ -52,10 +52,6 @@ class UpdateTeamAPIView(generics.UpdateAPIView):
                 {"error": "You are not the leader of this team."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        # team.name = request.data.get("name")
-        # team.save()
-        # headers = self.get_success_headers(team)
-        # return Response(request.data, status=status.HTTP_200_OK, headers=headers)
         kwargs["partial"] = True
         return super().update(request, *args, **kwargs)
 
