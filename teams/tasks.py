@@ -11,7 +11,7 @@ from os import getenv
 def send_invitation_email(invitation, team):
     frontend_base_url = getenv("FRONTEND_URL")
     # Construct the frontend URL with team_id and invitation_id as query parameters
-    accept_url = f"{frontend_base_url}/accept-invitation?teamId={team.id}&invitationId={invitation.id}"
+    accept_url = f"{frontend_base_url}/accept-invitation/{invitation.id}"
     subject = f"Invitation to join team {team.name} for {team.hackathon.title}"
     leader_full_name = f"{team.leader.first_name} {team.leader.last_name}"
     message = render_to_string(

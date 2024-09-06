@@ -20,12 +20,12 @@ urlpatterns = [
         name="invitations",
     ),
     path(
-        "<int:team_id>/invite/",
+        "invitations/<int:team_id>/",
         views.SendInvitationView.as_view(),
         name="send_invitation",
     ),
     path(
-        "<int:team_id>/accept/<str:invitation_id>/",
+        "invitations/accept/<str:invitation_id>/",
         views.AcceptInvitationView.as_view(),
         name="accept_invitation",
     ),

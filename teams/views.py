@@ -148,13 +148,12 @@ class AcceptInvitationView(generics.UpdateAPIView):
             id=self.kwargs["invitation_id"],
             receiver_email=request.user.email,
         )
-        invitation.accepted = True
         user = request.user
         with transaction.atomic():
             TeamMember.objects.create(
                 team=invitation.team, user=user, is_confirmed=True
             )
-            invitation.save()
+            invitation.delete()
         return Response(
             {"detail": "You have joined the team."}, status=status.HTTP_200_OK
         )
