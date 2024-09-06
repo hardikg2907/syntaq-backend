@@ -100,9 +100,11 @@ class SendInvitationView(generics.CreateAPIView):
         }
         serializer = self.get_serializer(data=invitation_data)
         serializer.is_valid(raise_exception=True)
+        user = get_user(request.data.get("receiver_email"))
         with transaction.atomic():
             self.perform_create(serializer)
             invitation = serializer.save()
+            TeamMember.objects.create(team=team, user=user, is_confirmed=False)
             transaction.on_commit(lambda: send_invitation_email.delay(invitation, team))
             # send_invitation_email.delay(invitation, team)
         headers = self.get_success_headers(serializer.data)
@@ -123,13 +125,16 @@ class AcceptInvitationView(generics.UpdateAPIView):
             id=self.kwargs["invitation_id"],
             receiver_email=request.user.email,
         )
+        team_member = get_object_or_404(
+            TeamMember, team=invitation.team, user=request.user
+        )
         invitation.accepted = True
+        team_member.is_confirmed = True
         user = request.user
         with transaction.atomic():
+            team_member.save()
             invitation.save()
-            TeamMember.objects.create(
-                team=invitation.team, user=user, is_confirmed=True
-            )
+
         return Response(
             {"detail": "You have joined the team."}, status=status.HTTP_200_OK
         )

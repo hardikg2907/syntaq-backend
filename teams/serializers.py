@@ -31,5 +31,6 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
+        read_only_fields = ["id", "sent_at"]
         model = Invitation
         fields = ["id", "team", "receiver_email", "sent_at", "accepted"]
