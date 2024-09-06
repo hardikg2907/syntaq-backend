@@ -10,7 +10,14 @@ urlpatterns = [
     path("update/<int:pk>/", views.UpdateTeamAPIView.as_view(), name="update_team"),
     path("create/", views.CreateTeamView.as_view(), name="create_team"),
     path(
-        "members/<int:team_id>/", views.TeamMembersView.as_view(), name="team_members"
+        "members/<int:team_id>/",
+        views.TeamMembersAndInvitationsListView.as_view(),
+        name="team_members",
+    ),
+    path(
+        "invitations/<int:team_id>",
+        views.InvitationsListView.as_view(),
+        name="invitations",
     ),
     path(
         "<int:team_id>/invite/",

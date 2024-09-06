@@ -12,6 +12,8 @@ from .models import Team, Invitation, TeamMember
 from .serializers import TeamSerializer, InvitationSerializer, TeamMemberSerializer
 from .tasks import send_invitation_email
 
+# Team Views
+
 
 class CreateTeamView(generics.CreateAPIView):
     serializer_class = TeamSerializer
@@ -72,12 +74,43 @@ class UserTeamInHackathonView(generics.RetrieveAPIView):
         return get_object_or_404(Team, leader=user, hackathon=hackathon_id)
 
 
-class TeamMembersView(generics.ListAPIView):
+# Team Members Views
+
+
+class TeamMembersListView(generics.ListAPIView):
     serializer_class = TeamMemberSerializer
 
     def get_queryset(self):
         team = get_object_or_404(Team, id=self.kwargs["team_id"])
         return team.members.all()
+
+
+class TeamMembersAndInvitationsListView(generics.GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+        team = get_object_or_404(Team, id=self.kwargs["team_id"])
+        members = team.members.all()
+        invitations = team.invitations.all()
+        members_serializer = TeamMemberSerializer(members, many=True)
+        invitations_serializer = InvitationSerializer(invitations, many=True)
+        return Response(
+            {
+                "accepted": members_serializer.data,
+                "pending": invitations_serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+# Invitations Views
+
+
+class InvitationsListView(generics.ListAPIView):
+    serializer_class = InvitationSerializer
+
+    def get_queryset(self):
+        team = get_object_or_404(Team, id=self.kwargs["team_id"])
+        return team.invitations.all()
 
 
 class SendInvitationView(generics.CreateAPIView):
