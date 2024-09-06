@@ -10,6 +10,9 @@ urlpatterns = [
     path("update/<int:pk>/", views.UpdateTeamAPIView.as_view(), name="update_team"),
     path("create/", views.CreateTeamView.as_view(), name="create_team"),
     path(
+        "members/<int:team_id>/", views.TeamMembersView.as_view(), name="team_members"
+    ),
+    path(
         "<int:team_id>/invite/",
         views.SendInvitationView.as_view(),
         name="send_invitation",
@@ -19,11 +22,6 @@ urlpatterns = [
         views.AcceptInvitationView.as_view(),
         name="accept_invitation",
     ),
-    # path(
-    #     "<int:team_id>/members/",
-    #     views.TeamMembersView.as_view(),
-    #     name="team_members",
-    # ),
     path(
         "register/<int:team_id>/",
         views.RegisterTeamView.as_view(),

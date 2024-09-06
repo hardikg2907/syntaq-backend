@@ -61,22 +61,6 @@ class TeamDetailAPIView(generics.RetrieveAPIView):
     queryset = Team.objects.all()
     lookup_field = "pk"
 
-    # def get_object(self):
-    #     team_id = self.kwargs.get("team_id")
-    #     leader_id = self.kwargs.get("leader_id")
-    #     hackathon_id = self.kwargs.get("hackathon_id")
-    #     leader = get_object_or_404(CustomUserModel, id=leader_id)
-    #     hackathon = get_object_or_404(Hackathon, id=hackathon_id)
-
-    #     if team_id:
-    #         return get_object_or_404(Team, id=team_id)
-    #     elif leader_id and hackathon_id:
-    #         return get_object_or_404(Team, leader=leader, hackathon=hackathon)
-    #     else:
-    #         return Response(
-    #             {"error": "Invalid team details"}, status=status.HTTP_400_BAD_REQUEST
-    #         )
-
 
 class UserTeamInHackathonView(generics.RetrieveAPIView):
     serializer_class = TeamSerializer
@@ -86,6 +70,14 @@ class UserTeamInHackathonView(generics.RetrieveAPIView):
         user = self.request.user
 
         return get_object_or_404(Team, leader=user, hackathon=hackathon_id)
+
+
+class TeamMembersView(generics.ListAPIView):
+    serializer_class = TeamMemberSerializer
+
+    def get_queryset(self):
+        team = get_object_or_404(Team, id=self.kwargs["team_id"])
+        return team.members.all()
 
 
 class SendInvitationView(generics.CreateAPIView):
@@ -100,11 +92,9 @@ class SendInvitationView(generics.CreateAPIView):
         }
         serializer = self.get_serializer(data=invitation_data)
         serializer.is_valid(raise_exception=True)
-        user = get_user(request.data.get("receiver_email"))
         with transaction.atomic():
             self.perform_create(serializer)
             invitation = serializer.save()
-            TeamMember.objects.create(team=team, user=user, is_confirmed=False)
             transaction.on_commit(lambda: send_invitation_email.delay(invitation, team))
             # send_invitation_email.delay(invitation, team)
         headers = self.get_success_headers(serializer.data)
@@ -125,16 +115,13 @@ class AcceptInvitationView(generics.UpdateAPIView):
             id=self.kwargs["invitation_id"],
             receiver_email=request.user.email,
         )
-        team_member = get_object_or_404(
-            TeamMember, team=invitation.team, user=request.user
-        )
         invitation.accepted = True
-        team_member.is_confirmed = True
         user = request.user
         with transaction.atomic():
-            team_member.save()
+            TeamMember.objects.create(
+                team=invitation.team, user=user, is_confirmed=True
+            )
             invitation.save()
-
         return Response(
             {"detail": "You have joined the team."}, status=status.HTTP_200_OK
         )

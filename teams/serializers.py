@@ -21,12 +21,11 @@ class TeamMemberSerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    members = TeamMemberSerializer(many=True, read_only=True)
 
     class Meta:
         read_only_fields = ["created_at", "id"]
         model = Team
-        fields = ["id", "hackathon", "name", "leader", "created_at", "members"]
+        fields = ["id", "hackathon", "name", "leader", "created_at"]
 
 
 class InvitationSerializer(serializers.ModelSerializer):
