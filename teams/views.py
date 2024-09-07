@@ -102,7 +102,30 @@ class TeamMembersAndInvitationsListView(generics.GenericAPIView):
         )
 
 
+class TeamMembersDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = TeamMemberSerializer
+    queryset = TeamMember.objects.all()
+    lookup_field = "pk"
+
+    def delete(self, request, *args, **kwargs):
+        team_member = self.get_object()
+        if team_member.team.leader != request.user:
+            return Response(
+                {"error": "You are not the leader of this team."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().delete(request, *args, **kwargs)
+
+
 # Invitations Views
+
+
+class TeamByInvitationView(generics.RetrieveAPIView):
+    serializer_class = TeamSerializer
+
+    def get_object(self):
+        invitation = get_object_or_404(Invitation, id=self.kwargs["invitation_id"])
+        return invitation.team
 
 
 class InvitationsListView(generics.ListAPIView):
@@ -111,6 +134,12 @@ class InvitationsListView(generics.ListAPIView):
     def get_queryset(self):
         team = get_object_or_404(Team, id=self.kwargs["team_id"])
         return team.invitations.all()
+
+
+class InvitationDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = InvitationSerializer
+    queryset = Invitation.objects.all()
+    lookup_field = "pk"
 
 
 class SendInvitationView(generics.CreateAPIView):
@@ -157,6 +186,21 @@ class AcceptInvitationView(generics.UpdateAPIView):
         return Response(
             {"detail": "You have joined the team."}, status=status.HTTP_200_OK
         )
+
+
+class InvitationDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = InvitationSerializer
+    queryset = Invitation.objects.all()
+    lookup_field = "pk"
+
+    def delete(self, request, *args, **kwargs):
+        invitation = self.get_object()
+        if invitation.team.leader != request.user:
+            return Response(
+                {"error": "You are not the leader of this team."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().delete(request, *args, **kwargs)
 
 
 class RegisterTeamView(generics.GenericAPIView):

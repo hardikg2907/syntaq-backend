@@ -10,19 +10,29 @@ urlpatterns = [
     path("update/<int:pk>/", views.UpdateTeamAPIView.as_view(), name="update_team"),
     path("create/", views.CreateTeamView.as_view(), name="create_team"),
     path(
-        "members/<int:team_id>/",
+        "members/<int:pk>/",
+        views.TeamMembersDeleteAPIView.as_view(),
+        name="team_members_delete",
+    ),
+    path(
+        "members-and-invitations/<int:team_id>/",
         views.TeamMembersAndInvitationsListView.as_view(),
         name="team_members",
     ),
     path(
-        "invitations/<int:team_id>",
-        views.InvitationsListView.as_view(),
-        name="invitations",
+        "invitations/<int:pk>",
+        views.InvitationDetailAPIView.as_view(),
+        name="invitations_detail",
     ),
     path(
         "invitations/<int:team_id>/",
         views.SendInvitationView.as_view(),
         name="send_invitation",
+    ),
+    path(
+        "invitations/<str:pk>/",
+        views.InvitationDeleteAPIView.as_view(),
+        name="delete_invitation",
     ),
     path(
         "invitations/accept/<str:invitation_id>/",
