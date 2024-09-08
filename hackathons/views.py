@@ -10,6 +10,7 @@ from .models import Hackathon
 from .serializers import HackathonSerializer
 
 from syntaq_auth.views import get_user
+from teams.models import Team, TeamMember
 
 
 @api_view(["GET"])
@@ -55,3 +56,31 @@ class HackathonDetailAPIView(generics.RetrieveAPIView):
 
 
 hackathon_detail_view = HackathonDetailAPIView.as_view()
+
+
+class UserTeamView(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        hackathon_id = self.kwargs.get("pk")
+        user = request.user
+
+        try:
+            team_member = TeamMember.objects.filter(
+                user=user, team__hackathon_id=hackathon_id
+            ).first()
+            if team_member:
+                team = team_member.team
+                return Response(
+                    {
+                        "team_name": team.name,
+                    }
+                )
+            else:
+                return Response(
+                    None,
+                    status=404,
+                )
+
+        except Exception as e:
+            # Log the error and return a 500 Internal Server Error response
+            print(f"Error occurred: {e}")
+            return Response({"error": "Internal Server Error"}, status=500)
