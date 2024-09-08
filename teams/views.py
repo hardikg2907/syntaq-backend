@@ -70,18 +70,21 @@ class UserTeamInHackathonView(generics.RetrieveAPIView):
     def get_object(self):
         hackathon_id = self.kwargs.get("hackathon_id")
         user = self.request.user
+        team_member = get_object_or_404(
+            TeamMember, user=user, team__hackathon=hackathon_id
+        )
 
-        return get_object_or_404(Team, leader=user, hackathon=hackathon_id)
+        return team_member.team
 
 
 # Team Members Views
 
 
-class TeamMembersListView(generics.ListAPIView):
+class TeamMembersListAPIView(generics.ListAPIView):
     serializer_class = TeamMemberSerializer
 
     def get_queryset(self):
-        team = get_object_or_404(Team, id=self.kwargs["team_id"])
+        team = self.get_object(Team, id=self.kwargs["team_id"])
         return team.members.all()
 
 
