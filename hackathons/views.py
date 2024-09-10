@@ -64,9 +64,11 @@ class UserTeamView(generics.RetrieveAPIView):
         user = request.user
 
         try:
-            team_member = TeamMember.objects.filter(
-                user=user, team__hackathon_id=hackathon_id
-            ).first()
+            team_member = (
+                TeamMember.objects.select_related("team")
+                .filter(user=user, team__hackathon_id=hackathon_id)
+                .first()
+            )
             if team_member:
                 team = team_member.team
                 return Response(
@@ -75,10 +77,7 @@ class UserTeamView(generics.RetrieveAPIView):
                     }
                 )
             else:
-                return Response(
-                    None,
-                    status=404,
-                )
+                return Response(None)
 
         except Exception as e:
             # Log the error and return a 500 Internal Server Error response
