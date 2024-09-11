@@ -9,7 +9,12 @@ from hackathons.models import Hackathon
 from syntaq_auth.models import CustomUserModel
 from syntaq_auth.views import get_user
 from .models import Team, Invitation, TeamMember
-from .serializers import TeamSerializer, InvitationSerializer, TeamMemberSerializer
+from .serializers import (
+    TeamSerializer,
+    InvitationSerializer,
+    TeamMemberSerializer,
+    InvitationTeamMemberSerializer,
+)
 from .tasks import send_invitation_email
 
 # Team Views
@@ -140,7 +145,7 @@ class InvitationsListView(generics.ListAPIView):
 
 
 class InvitationDetailAPIView(generics.RetrieveAPIView):
-    serializer_class = InvitationSerializer
+    serializer_class = InvitationTeamMemberSerializer
     queryset = Invitation.objects.all()
     lookup_field = "pk"
 

@@ -10,6 +10,11 @@ urlpatterns = [
     path("update/<int:pk>/", views.UpdateTeamAPIView.as_view(), name="update_team"),
     path("create/", views.CreateTeamView.as_view(), name="create_team"),
     path(
+        "<int:team_id>/members/",
+        views.TeamMembersListAPIView.as_view(),
+        name="team_members_list",
+    ),
+    path(
         "members/<int:pk>/",
         views.TeamMembersDeleteAPIView.as_view(),
         name="team_members_delete",
@@ -20,7 +25,7 @@ urlpatterns = [
         name="team_members",
     ),
     path(
-        "invitations/<int:pk>",
+        "invitations/<str:pk>",
         views.InvitationDetailAPIView.as_view(),
         name="invitations_detail",
     ),

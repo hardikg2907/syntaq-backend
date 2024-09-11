@@ -33,3 +33,19 @@ class InvitationSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "sent_at"]
         model = Invitation
         fields = ["id", "team", "receiver_email", "sent_at", "accepted"]
+
+
+class TeamTeamMemberSerializer(serializers.ModelSerializer):
+    members = TeamMemberSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Team
+        fields = ["id", "name", "members", "leader","hackathon"]
+
+
+class InvitationTeamMemberSerializer(serializers.ModelSerializer):
+    team = TeamTeamMemberSerializer(read_only=True)
+
+    class Meta:
+        model = Invitation
+        fields = ["id", "team", "receiver_email", "sent_at", "accepted"]
