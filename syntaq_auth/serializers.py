@@ -1,4 +1,6 @@
 from rest_framework.serializers import ModelSerializer
+from rest_flex_fields import FlexFieldsModelSerializer
+
 from .models import CustomUserModel
 from django.conf import settings
 
@@ -22,8 +24,8 @@ class CustomUserModelSerializer(ModelSerializer):
         return user
 
 
-class PublicUserDetailSerializer(ModelSerializer):
+class PublicUserDetailSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = CustomUserModel
-        fields = [ "email", "username", "first_name", "last_name"]
+        fields = ["email", "username", "first_name", "last_name"]

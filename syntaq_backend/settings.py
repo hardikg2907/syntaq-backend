@@ -17,6 +17,8 @@ import datetime
 
 import dotenv
 
+from rest_flex_fields import filter_backends
+
 dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -218,6 +220,7 @@ REST_FRAMEWORK = {
     # "DEFAULT_PERMISSIONS_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     # "PAGE_SIZE": 10,
+    "DEFAULT_FILTER_BACKENDS": (filter_backends.FlexFieldsFilterBackend,),
 }
 
 SIMPLE_JWT = {

@@ -40,7 +40,7 @@ class TeamTeamMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ["id", "name", "members", "leader","hackathon"]
+        fields = ["id", "name", "members", "leader", "hackathon"]
 
 
 class InvitationTeamMemberSerializer(serializers.ModelSerializer):

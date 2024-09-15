@@ -14,7 +14,9 @@ class Hackathon(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
 
-    organizerId = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE)
+    organizerId = models.ForeignKey(
+        CustomUserModel, on_delete=models.CASCADE, related_name="organized_hackathons"
+    )
 
     registrationOpen = models.DateTimeField()
     registrationClose = models.DateTimeField()

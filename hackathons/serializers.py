@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from rest_flex_fields import FlexFieldsModelSerializer
 
 
 # from api.serializers import UserPublicSerializer
@@ -10,7 +11,7 @@ from syntaq_auth.serializers import PublicUserDetailSerializer
 from .validators import *
 
 
-class HackathonSerializer(serializers.ModelSerializer):
+class HackathonSerializer(FlexFieldsModelSerializer):
     organizerId = serializers.PrimaryKeyRelatedField(read_only=True)
     organizer = PublicUserDetailSerializer(read_only=True, source="organizerId")
     start_date = serializers.DateTimeField()
@@ -42,3 +43,8 @@ class HackathonSerializer(serializers.ModelSerializer):
             "maxTeamSize",
             "minTeamSize",
         ]
+
+        expandable_fields = {
+            "teams": ("teams.TeamSerializer", {"many": True}),
+            # "organizerId": ("syntaq_auth.serializers.PublicUserDetailSerializer"),
+        }
