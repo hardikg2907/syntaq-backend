@@ -13,7 +13,7 @@ from .validators import *
 
 class HackathonSerializer(FlexFieldsModelSerializer):
     organizerId = serializers.PrimaryKeyRelatedField(read_only=True)
-    organizer = PublicUserDetailSerializer(read_only=True, source="organizerId")
+    # organizer = PublicUserDetailSerializer(read_only=True, source="organizerId")
     start_date = serializers.DateTimeField()
 
     def validate(self, attrs):
@@ -33,7 +33,7 @@ class HackathonSerializer(FlexFieldsModelSerializer):
             "start_date",
             "end_date",
             "organizerId",
-            "organizer",
+            # "organizer",
             "registrationOpen",
             "registrationClose",
             "location",
@@ -46,5 +46,8 @@ class HackathonSerializer(FlexFieldsModelSerializer):
 
         expandable_fields = {
             "teams": ("teams.TeamSerializer", {"many": True}),
-            # "organizerId": ("syntaq_auth.serializers.PublicUserDetailSerializer"),
+            "organizer": (
+                "syntaq_auth.serializers.PublicUserDetailSerializer",
+                {"source": "organizerId"},
+            ),
         }
