@@ -27,11 +27,6 @@ class HackathonListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = HackathonSerializer
 
     def create(self, request, *args, **kwargs):
-        print(request.user)
-        # print(request.data)
-        # user_email = request.data.get("userEmail")
-        # userId = get_user(user_email)
-        # print(userId)
         # serializer.save(organizerId=user)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -82,4 +77,4 @@ class UserTeamView(generics.RetrieveAPIView):
         except Exception as e:
             # Log the error and return a 500 Internal Server Error response
             print(f"Error occurred: {e}")
-            return Response({"error": "Internal Server Error"}, status=500)
+            return Response({"error": e}, status=500)
