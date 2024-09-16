@@ -94,8 +94,8 @@ class ParticipatedHackathonView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return (
-            Hackathon.objects.filter(teams__members=user)
+            Hackathon.objects.prefetch_related("teams__members")
+            .filter(teams__members__user=user)
             .distinct()
-            .prefetch_related("teams")
             .order_by("-created_at")
         )
