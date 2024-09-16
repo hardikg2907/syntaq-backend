@@ -9,6 +9,11 @@ urlpatterns = [
         views.OrganizerHackathonView.as_view(),
         name="organized-hackathons",
     ),
+    path(
+        "participated-hackathons/",
+        views.ParticipatedHackathonView.as_view(),
+        name="participated-hackathons",
+    ),
     path("<int:pk>/", views.hackathon_detail_view),
     path("<int:pk>/user-team/", views.UserTeamView.as_view(), name="user-team"),
 ]

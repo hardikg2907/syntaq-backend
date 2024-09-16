@@ -86,3 +86,16 @@ class OrganizerHackathonView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Hackathon.objects.filter(organizerId=user).order_by("-created_at")
+
+
+class ParticipatedHackathonView(generics.ListAPIView):
+    serializer_class = HackathonSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return (
+            Hackathon.objects.filter(teams__members=user)
+            .distinct()
+            .prefetch_related("teams")
+            .order_by("-created_at")
+        )
