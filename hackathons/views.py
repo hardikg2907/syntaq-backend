@@ -78,3 +78,11 @@ class UserTeamView(generics.RetrieveAPIView):
             # Log the error and return a 500 Internal Server Error response
             print(f"Error occurred: {e}")
             return Response({"error": e}, status=500)
+
+
+class OrganizerHackathonView(generics.ListAPIView):
+    serializer_class = HackathonSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Hackathon.objects.filter(organizerId=user).order_by("-created_at")
