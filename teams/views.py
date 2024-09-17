@@ -167,11 +167,18 @@ class SendInvitationView(generics.CreateAPIView):
         }
         serializer = self.get_serializer(data=invitation_data)
         serializer.is_valid(raise_exception=True)
+        receiver_email = request.data.get("receiver_email")
+        if TeamMember.objects.filter(
+            user__email=receiver_email, team__hackathon=team.hackathon
+        ).exists():
+            return Response(
+                {"error": "The user is already part of a team in this hackathon."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         with transaction.atomic():
             self.perform_create(serializer)
             invitation = serializer.save()
             transaction.on_commit(lambda: send_invitation_email.delay(invitation, team))
-            # send_invitation_email.delay(invitation, team)
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
