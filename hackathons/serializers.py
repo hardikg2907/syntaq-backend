@@ -18,8 +18,15 @@ class HackathonSerializer(FlexFieldsModelSerializer):
 
     def validate(self, attrs):
         # print(attrs["title"])
-        validate_dates(attrs)
-        validate_team_size(attrs)
+        request = self.context.get("request")
+
+        if request.method == "POST":
+            validate_dates(attrs, "POST")
+            validate_team_size(attrs)
+
+        if request.method == "PATCH":
+            validate_dates(attrs, "PATCH")
+            validate_team_size(attrs)
 
         return super().validate(attrs)
 

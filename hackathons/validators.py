@@ -3,8 +3,9 @@ from datetime import datetime
 from pytz import timezone
 
 
-def validate_dates(data):
+def validate_dates(data, method):
     now = datetime.now().astimezone(timezone("UTC"))
+
     if data["start_date"] < now:
         raise serializers.ValidationError(
             {"start_date": "Start date cannot be before current time."}
@@ -13,12 +14,13 @@ def validate_dates(data):
         raise serializers.ValidationError(
             {"end_date": "End date cannot be before current time."}
         )
-    if data["registrationOpen"] < now:
-        raise serializers.ValidationError(
-            {
-                "registrationOpen": "Registration open date cannot be before current time."
-            }
-        )
+    if method == "POST":
+        if data["registrationOpen"] < now:
+            raise serializers.ValidationError(
+                {
+                    "registrationOpen": "Registration open date cannot be before current time."
+                }
+            )
     if data["registrationClose"] < now:
         raise serializers.ValidationError(
             {
