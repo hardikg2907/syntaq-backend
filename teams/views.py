@@ -72,14 +72,19 @@ class TeamDetailAPIView(generics.RetrieveAPIView):
 class UserTeamInHackathonView(generics.RetrieveAPIView):
     serializer_class = TeamSerializer
 
-    def get_object(self):
-        hackathon_id = self.kwargs.get("hackathon_id")
-        user = self.request.user
-        team_member = get_object_or_404(
-            TeamMember, user=user, team__hackathon=hackathon_id
-        )
-
-        return team_member.team
+    def get(self, request, *args, **kwargs):
+        try:
+            hackathon_id = kwargs.get("hackathon_id")
+            user = request.user
+            team_member = TeamMember.objects.filter(
+                user=user, team__hackathon=hackathon_id
+            ).first()
+            if team_member:
+                team = team_member.team
+                return Response(TeamSerializer(team).data, status=status.HTTP_200_OK)
+            return Response(None, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Team Members Views
