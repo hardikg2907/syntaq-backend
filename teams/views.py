@@ -192,20 +192,28 @@ class AcceptInvitationView(generics.UpdateAPIView):
         return self.update(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        invitation = get_object_or_404(
-            Invitation,
-            id=self.kwargs["invitation_id"],
-            receiver_email=request.user.email,
-        )
-        user = request.user
-        with transaction.atomic():
-            TeamMember.objects.create(
-                team=invitation.team, user=user, is_confirmed=True
+        try:
+            invitation = get_object_or_404(
+                Invitation,
+                id=self.kwargs["invitation_id"],
+                receiver_email=request.user.email,
             )
-            invitation.delete()
-        return Response(
-            {"detail": "You have joined the team."}, status=status.HTTP_200_OK
-        )
+            user = request.user
+            with transaction.atomic():
+                TeamMember.objects.create(
+                    team=invitation.team, user=user, is_confirmed=True
+                )
+                invitation.delete()
+                team = invitation.team
+                if team.is_valid():
+                    team.register_team()
+            return Response(
+                {"detail": "You have joined the team."}, status=status.HTTP_200_OK
+            )
+        
+        except Exception as e:
+            print(e)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InvitationDeleteAPIView(generics.DestroyAPIView):

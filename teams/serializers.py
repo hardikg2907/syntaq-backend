@@ -25,7 +25,14 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         read_only_fields = ["created_at", "id"]
         model = Team
-        fields = ["id", "hackathon", "name", "leader", "created_at"]
+        fields = [
+            "id",
+            "hackathon",
+            "name",
+            "leader",
+            "created_at",
+            "registration_complete",
+        ]
 
 
 class InvitationSerializer(serializers.ModelSerializer):

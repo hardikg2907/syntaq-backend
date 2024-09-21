@@ -16,32 +16,29 @@ class Team(models.Model):
         CustomUserModel, on_delete=models.CASCADE, related_name="led_teams"
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    registered = models.BooleanField(default=False)
+    registration_complete = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ("hackathon", "leader")
 
-    def is_registration_complete(self):
+    def is_valid(self):
         """
         Check if the team's registration is complete and validation.
         Returns:
             bool: True if the team's registration is complete and valid composition, False otherwise.
         """
+        members_count = self.members.count()
         if (
-            self.members.count() < self.hackathon.min_team_size
-            or self.members.count() > self.hackathon.max_team_size
+            members_count < self.hackathon.minTeamSize
+            or members_count > self.hackathon.maxTeamSize
         ):
-            raise ValidationError("Team size is not within the hackathon's limits")
-        return self.members.filter(is_confirmed=False).count() == 0
+            # raise ValidationError("Team size is not within the hackathon's limits")
+            return False
+        return True
 
     def register_team(self):
-        if self.is_registration_complete():
-            # self.hackathon.registered_teams.add(self)
-            # proceed with registration logic
-            self.registered = True
-            pass
-        else:
-            raise ValidationError("Team registration is incomplete")
+        self.registration_complete = True
+        self.save()
 
     def __str__(self):
         return f"{self.name} - {self.hackathon.title}"
