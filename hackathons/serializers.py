@@ -25,7 +25,7 @@ class HackathonSerializer(FlexFieldsModelSerializer):
             validate_team_size(attrs)
 
         if request.method == "PATCH":
-            validate_dates(attrs, "PATCH")
+            validate_dates(attrs, "PATCH", instance=self.instance)
             validate_team_size(attrs)
 
         return super().validate(attrs)

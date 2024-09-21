@@ -50,7 +50,6 @@ class HackathonDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     lookup_field = "pk"
 
     def update(self, request, *args, **kwargs):
-        print(request.data)
         # user = request.user
         # if not user:
         #     return Response(
@@ -77,33 +76,6 @@ class HackathonDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 
 
 hackathon_detail_update_destroy_view = HackathonDetailUpdateDestroyAPIView.as_view()
-
-
-class HackathonUpdateAPIView(generics.UpdateAPIView):
-    queryset = Hackathon.objects.all()
-    serializer_class = HackathonSerializer
-    lookup_field = "pk"
-
-    def update(self, request, *args, **kwargs):
-        print(request.data)
-        # user = request.user
-        # if not user:
-        #     return Response(
-        #         {"error": "You must be logged in to update a hackathon"},
-        #         status=status.HTTP_401_UNAUTHORIZED,
-        #     )
-        instance = self.get_object()
-
-        # if instance.organizerId != user:
-        #     return Response(
-        #         {"error": "You are not authorized to update this hackathon"},
-        #         status=status.HTTP_403_FORBIDDEN,
-        #     )
-
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
 
 
 class UserTeamView(generics.RetrieveAPIView):

@@ -15,10 +15,5 @@ urlpatterns = [
         name="participated-hackathons",
     ),
     path("<int:pk>/", views.hackathon_detail_update_destroy_view),
-    # path(
-    #     "<int:pk>/",
-    #     views.HackathonUpdateAPIView.as_view(),
-    #     name="update-hackathon",
-    # ),
     path("<int:pk>/user-team/", views.UserTeamView.as_view(), name="user-team"),
 ]
