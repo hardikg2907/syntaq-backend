@@ -12,6 +12,8 @@ from .serializers import HackathonSerializer
 from syntaq_auth.views import get_user
 from teams.models import Team, TeamMember
 
+from teams.serializers import TeamSerializer
+
 
 @api_view(["GET"])
 def api_home(request, *args, **kwargs):
@@ -124,3 +126,23 @@ class ParticipatedHackathonView(generics.ListAPIView):
             .distinct()
             .order_by("-created_at")
         )
+
+
+class HackathonRegistrationsAPIView(generics.ListAPIView):
+    serializer_class = TeamSerializer
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        hackathon_id = kwargs.get("pk")
+        hackathon = Hackathon.objects.get(id=hackathon_id)
+        print(hackathon)
+        if hackathon.organizerId != user:
+            return Response(
+                {"error": "You are not authorized to view this page"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        hackathon_id = self.kwargs.get("pk")
+        return Team.objects.filter(hackathon_id=hackathon_id).order_by("-created_at")
