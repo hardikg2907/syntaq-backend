@@ -51,22 +51,38 @@ class HackathonDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     serializer_class = HackathonSerializer
     lookup_field = "pk"
 
+    # def get(self, request, *args, **kwargs):
+    #     user = request.user
+    #     try:
+    #         instance = self.get_object()
+    #         serializer = self.get_serializer(instance)
+    #         print(instance.organizerId, user, instance.organizerId != user)
+    #         if user and instance.organizerId != user:
+    #             return Response(
+    #                 {"error": "You are not authorized to view this hackathon"},
+    #                 status=status.HTTP_403_FORBIDDEN,
+    #             )
+    #         return Response(serializer.data)
+    #     except Exception as e:
+    #         print(f"Error occurred: {e}")
+    # return Response({"error": e}, status=500)
+
     def update(self, request, *args, **kwargs):
-        # user = request.user
-        # if not user:
-        #     return Response(
-        #         {"error": "You must be logged in to update a hackathon"},
-        #         status=status.HTTP_401_UNAUTHORIZED,
-        #     )
+        user = request.user
+        if not user:
+            return Response(
+                {"error": "You must be logged in to update a hackathon"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         try:
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             old_data = serializer.to_representation(instance)
-            # if instance.organizerId != user:
-            #     return Response(
-            #         {"error": "You are not authorized to update this hackathon"},
-            #         status=status.HTTP_403_FORBIDDEN,
-            #     )
+            if instance.organizerId != user:
+                return Response(
+                    {"error": "You are not authorized to update this hackathon"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             updated_data = {**old_data, **request.data}
             serializer = self.get_serializer(instance, data=updated_data, partial=True)
             serializer.is_valid(raise_exception=True)
