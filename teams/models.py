@@ -28,9 +28,11 @@ class Team(models.Model):
             bool: True if the team's registration is complete and valid composition, False otherwise.
         """
         members_count = self.members.count()
+        invitations_count = self.invitations.count()
         if (
             members_count < self.hackathon.minTeamSize
             or members_count > self.hackathon.maxTeamSize
+            or invitations_count != 0
         ):
             # raise ValidationError("Team size is not within the hackathon's limits")
             return False
