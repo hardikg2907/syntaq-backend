@@ -17,6 +17,8 @@ from .serializers import (
 )
 from .tasks import send_invitation_email
 
+import posthog
+
 # Team Views
 
 
@@ -24,27 +26,37 @@ class CreateTeamView(generics.CreateAPIView):
     serializer_class = TeamSerializer
 
     def create(self, request, *args, **kwargs):
-        hackathon = get_object_or_404(
-            Hackathon, id=self.request.data.get("hackathon_id")
-        )
-        # user = get_user(self.request.data.get("user_email"))
-        user = request.user
-        with transaction.atomic():
-            serializer = self.get_serializer(
-                data={
-                    "name": request.data.get("name"),
-                    "hackathon": hackathon.pk,
-                    "leader": user.pk,
-                }
+        try:
+            hackathon = get_object_or_404(
+                Hackathon, id=self.request.data.get("hackathon_id")
             )
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            team = serializer.save()
-            TeamMember.objects.create(team=team, user=user, is_confirmed=True)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+            # user = get_user(self.request.data.get("user_email"))
+            user = request.user
+            with transaction.atomic():
+                serializer = self.get_serializer(
+                    data={
+                        "name": request.data.get("name"),
+                        "hackathon": hackathon.pk,
+                        "leader": user.pk,
+                    }
+                )
+                serializer.is_valid(raise_exception=True)
+                self.perform_create(serializer)
+                team = serializer.save()
+                TeamMember.objects.create(team=team, user=user, is_confirmed=True)
+            posthog.capture(
+                user.pk,
+                event="team_registration",
+                properties={
+                    "id": hackathon.pk,
+                },
+            )
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED, headers=headers
+            )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateTeamAPIView(generics.UpdateAPIView):
@@ -210,7 +222,7 @@ class AcceptInvitationView(generics.UpdateAPIView):
             return Response(
                 {"detail": "You have joined the team."}, status=status.HTTP_200_OK
             )
-        
+
         except Exception as e:
             print(e)
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
