@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 import posthog
+import os
 
 
 class TeamsConfig(AppConfig):
@@ -7,5 +8,5 @@ class TeamsConfig(AppConfig):
     name = "teams"
 
     def ready(self):
-        posthog.api_key = "phc_hegIFzYoiooISUbdtkhiT3JDG4itI3DglJGw4vLVv0W"
-        posthog.host = "https://us.i.posthog.com"
+        posthog.api_key = os.getenv("POSTHOG_API_KEY")
+        posthog.host = os.getenv("POSTHOG_HOST")
