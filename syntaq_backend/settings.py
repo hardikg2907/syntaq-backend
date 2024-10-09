@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from os import getenv, path
 import dj_database_url
+import ssl
 import datetime
 
 import dotenv
@@ -239,9 +240,18 @@ REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "syntaq_auth.serializers.CustomUserModelSerializer",
 }
 
-
+# celery -A syntaq_backend worker --loglevel=info
 # Celery settings
-CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_BROKER_URL = getenv("UPSTASH_REDIS_URL")
+# CELERY_BACKEND_URL = getenv("UPSTASH_REDIS_URL")
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# redis_backend_use_ssl
+# CELERY_REDIS_BACKEND_USE_SSL = True
+# broker_use_ssl
+CELERY_BROKER_USE_SSL = {
+    "ssl_cert_reqs": ssl.CERT_REQUIRED,
+}
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle", "json"]

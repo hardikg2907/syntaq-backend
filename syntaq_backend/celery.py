@@ -7,7 +7,7 @@ from django.conf import settings
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "syntaq_backend.settings")
 os.environ.setdefault("FORKED_BY_MULTIPROCESSING", "1")
 
-app = Celery("syntaq_backend")
+app = Celery("syntaq_backend", broker=os.getenv("UPSTASH_REDIS_URL"))
 
 # Configure Celery using settings from Django settings.py.
 app.config_from_object("django.conf:settings", namespace="CELERY")
