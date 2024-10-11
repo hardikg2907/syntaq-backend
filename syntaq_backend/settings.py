@@ -242,16 +242,16 @@ REST_AUTH_SERIALIZERS = {
 
 # celery -A syntaq_backend worker --loglevel=info
 # Celery settings
-CELERY_BROKER_URL = getenv("UPSTASH_REDIS_URL")
+CELERY_BROKER_URL = getenv("REDIS_URL")
 # CELERY_BACKEND_URL = getenv("UPSTASH_REDIS_URL")
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # redis_backend_use_ssl
 # CELERY_REDIS_BACKEND_USE_SSL = True
 # broker_use_ssl
-CELERY_BROKER_USE_SSL = {
-    "ssl_cert_reqs": ssl.CERT_REQUIRED,
-}
+# CELERY_BROKER_USE_SSL = {
+#     "ssl_cert_reqs": ssl.CERT_REQUIRED,
+# }
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle", "json"]
