@@ -173,6 +173,13 @@ class SendInvitationView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         # print(request.user)
         team = get_object_or_404(Team, id=self.kwargs["team_id"], leader=request.user)
+        num_members = team.members.count()
+        num_invitations = team.invitations.count()
+        if num_members + num_invitations >= team.hackathon.maxTeamSize:
+            return Response(
+                {"error": "The team is already full."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         invitation_data = {
             "team": team.pk,
             "receiver_email": request.data.get("receiver_email"),
