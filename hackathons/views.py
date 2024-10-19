@@ -14,6 +14,11 @@ from teams.models import Team, TeamMember
 
 from teams.serializers import TeamSerializer
 import posthog
+import redis
+import json, uuid
+
+# Create a Redis client instance
+redis_client = redis.StrictRedis(host="localhost", port=6379, db=0)
 
 
 @api_view(["GET"])
@@ -47,6 +52,14 @@ class HackathonListCreateAPIView(generics.ListCreateAPIView):
 hackathon_list_create_view = HackathonListCreateAPIView.as_view()
 
 
+# Custom UUID encoder for JSON serialization
+class UUIDEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, uuid.UUID):
+            return str(obj)  # Convert UUID to string
+        return super().default(obj)
+
+
 class HackathonDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Hackathon.objects.all()
     serializer_class = HackathonSerializer
@@ -70,12 +83,32 @@ class HackathonDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 
     def get(self, request, *args, **kwargs):
         try:
+            hackathon_id = kwargs.get("pk")
+            cache_key = f"hackathon_{hackathon_id}_view"  # Create a unique cache key
+            # Check if the data is already cached in Redis
+            cached_data = redis_client.get(cache_key)
+            if cached_data:
+                print("Serving from Redis cache")
+                # Deserialize JSON data before returning
+                cached_data = json.loads(cached_data)
+                return Response(cached_data)
+
             posthog.capture(
                 distinct_id=str(datetime.now()),
                 event="hackathon_view",
                 properties={"id": kwargs.get("pk")},
             )
-            return super().get(request, *args, **kwargs)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            hackathon_serialized_data = serializer.data
+            # Cache the response data for future requests (cache as JSON for 1 hour)
+            redis_client.setex(
+                cache_key,
+                3600,
+                json.dumps(hackathon_serialized_data, cls=UUIDEncoder),
+            )
+
+            return Response(hackathon_serialized_data)
         except Exception as e:
             print(f"Error occurred: {e}")
             return Response({"error": e}, status=500)
@@ -100,6 +133,7 @@ class HackathonDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
             serializer = self.get_serializer(instance, data=updated_data, partial=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
+            redis_client.delete(f"hackathon_{instance.id}_view")
             return Response(serializer.data)
         except Exception as e:
             print(f"Error occurred: {e}")
