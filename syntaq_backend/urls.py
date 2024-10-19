@@ -24,4 +24,5 @@ urlpatterns = [
     path("api/auth/", include("syntaq_auth.urls")),  # our own views
     path("api/hackathons/", include("hackathons.urls")),
     path("api/teams/", include("teams.urls")),
+    path("api/manage/", include("manage_hackathon.urls")),
 ]

@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "syntaq_auth",
     "hackathons",
     "teams",
+    "manage_hackathon",
 ]
 SITE_ID = 1
 REST_AUTH = {
