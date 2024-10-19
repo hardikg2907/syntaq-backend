@@ -13,6 +13,7 @@ from syntaq_auth.views import get_user
 from teams.models import Team, TeamMember
 
 from teams.serializers import TeamSerializer
+import posthog
 
 
 @api_view(["GET"])
@@ -66,6 +67,18 @@ class HackathonDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     #     except Exception as e:
     #         print(f"Error occurred: {e}")
     # return Response({"error": e}, status=500)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            posthog.capture(
+                distinct_id=str(datetime.now()),
+                event="hackathon_view",
+                properties={"id": kwargs.get("pk")},
+            )
+            return super().get(request, *args, **kwargs)
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            return Response({"error": e}, status=500)
 
     def update(self, request, *args, **kwargs):
         user = request.user
