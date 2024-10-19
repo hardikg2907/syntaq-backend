@@ -69,12 +69,15 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
 }
+"""
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "13.126.102.199",
+    "13.232.193.104",
+    "https://horrible-falcon-16.telebit.io"
 ]
-
+"""
+ALLOWED_HOSTS = ["*"]
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
